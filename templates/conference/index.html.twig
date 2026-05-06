@@ -3,31 +3,125 @@
 {% block title %}Lista konferencji - Guestbook{% endblock %}
 
 {% block body %}
-    <h1>Nasze konferencje</h1>
+<style>
+    :root {
+        --primary: #2563eb;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --border: #e2e8f0;
+        --bg-hover: #f8fafc;
+    }
+
+    body { background-color: #ffffff; color: var(--text-main); font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    
+    .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+    
+    .page-title { font-size: 2rem; font-weight: 800; margin-bottom: 40px; border-bottom: 3px solid var(--primary); display: inline-block; padding-bottom: 8px; }
+
+    .conference-list { list-style: none; padding: 0; margin: 0; }
+
+    .conference-item { 
+        display: flex; 
+        flex-direction: column;
+        padding: 25px 0; 
+        border-bottom: 1px solid var(--border);
+        transition: background 0.2s;
+    }
+
+    .conference-item:hover { background-color: var(--bg-hover); padding-left: 15px; padding-right: 15px; margin-left: -15px; margin-right: -15px; border-radius: 8px; }
+
+    .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    
+    .title-area { display: flex; align-items: center; gap: 15px; }
+    .city-year { font-size: 1.4rem; font-weight: 700; color: var(--text-main); margin: 0; }
+
+    .badge { 
+        font-size: 0.7rem; 
+        font-weight: 700; 
+        padding: 4px 10px; 
+        border-radius: 4px; 
+        background: #eff6ff; 
+        color: var(--primary);
+        text-transform: uppercase;
+        border: 1px solid #dbeafe;
+    }
+
+    .description { color: var(--text-muted); line-height: 1.6; margin-bottom: 15px; max-width: 700px; }
+
+    .speakers-row { margin-bottom: 15px; }
+    .speaker-label { font-size: 0.8rem; color: var(--text-muted); margin-right: 8px; font-weight: 600; }
+    .speaker-name { 
+        display: inline-block; 
+        font-size: 0.9rem; 
+        background: #f1f5f9; 
+        padding: 2px 8px; 
+        border-radius: 4px; 
+        margin-right: 5px;
+        cursor: help;
+        border: 1px solid #e2e8f0;
+    }
+
+    .item-footer { 
+        display: flex; 
+        gap: 20px; 
+        font-size: 0.85rem; 
+        color: var(--text-muted); 
+    }
+
+    .stat { display: flex; align-items: center; gap: 6px; }
+    .stat strong { color: var(--text-main); }
+
+    @media (max-width: 600px) {
+        .item-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    }
+</style>
+
+<div class="container">
+    <h1 class="page-title">Harmonogram konferencji</h1>
 
     {% if conferences is empty %}
-        <p>Brak konferencji.</p>
+        <p>Brak zaplanowanych wydarzeń.</p>
     {% else %}
-        <ul>
+        <ul class="conference-list">
             {% for conference in conferences %}
-                <li style="margin-bottom: 20px;">
-                    <strong>{{ conference.city|upper }} {{ conference.year }}</strong>
-                    {% if conference.isInternational %}
-                        <span class="badge" style="background: #eee; padding: 2px 5px;">Międzynarodowa</span>
-                    {% endif %}
+                <li class="conference-item">
+                    <div class="item-header">
+                        <div class="title-area">
+                            <h2 class="city-year">{{ conference.city|upper }} {{ conference.year }}</h2>
+                            {% if conference.isInternational %}
+                                <span class="badge">International</span>
+                            {% endif %}
+                        </div>
+                    </div>
 
-                    {# Wyświetlanie opisu #}
-                    <p>{{ conference.description }}</p>
+                    <div class="description">
+                        {{ conference.description ?: 'Opis wydarzenia zostanie uzupełniony wkrótce.' }}
+                    </div>
 
-                    {# Wyświetlanie liczby uczestników z warunkiem null #}
-                    <p>
-                        <small>
-                            Liczba uczestników: 
-                            {{ conference.participantsCount ?? 'bez limitu' }}
-                        </small>
-                    </p>
+                    <div class="speakers-row">
+                        <span class="speaker-label">Prelegenci:</span>
+                        {% if conference.speakers is empty %}
+                            <span style="font-size: 0.9rem; font-style: italic; color: #94a3b8;">Lista w trakcie ustalania</span>
+                        {% else %}
+                            {% for speaker in conference.speakers %}
+                                <span class="speaker-name" title="{{ speaker.bio }}">
+                                    {{ speaker.firstName }} {{ speaker.lastName }}
+                                </span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="item-footer">
+                        <div class="stat">
+                            <span>💬</span> <strong>{{ conference.comments|length }}</strong> komentarzy
+                        </div>
+                        <div class="stat">
+                            <span>👥</span> Limit: <strong>{{ conference.maxAttendees ?? 'bez limitu' }}</strong>
+                        </div>
+                    </div>
                 </li>
             {% endfor %}
         </ul>
     {% endif %}
+</div>
 {% endblock %}
