@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Lista konferencji - Guestbook{% endblock %}
+
+{% block body %}
+    <h1>Nasze konferencje</h1>
+
+    {% if conferences is empty %}
+        <p>Brak konferencji.</p>
+    {% else %}
+        <ul>
+            {% for conference in conferences %}
+                <li style="margin-bottom: 20px;">
+                    <strong>{{ conference.city|upper }} {{ conference.year }}</strong>
+                    {% if conference.isInternational %}
+                        <span class="badge" style="background: #eee; padding: 2px 5px;">Międzynarodowa</span>
+                    {% endif %}
+
+                    {# Wyświetlanie opisu #}
+                    <p>{{ conference.description }}</p>
+
+                    {# Wyświetlanie liczby uczestników z warunkiem null #}
+                    <p>
+                        <small>
+                            Liczba uczestników: 
+                            {{ conference.participantsCount ?? 'bez limitu' }}
+                        </small>
+                    </p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
