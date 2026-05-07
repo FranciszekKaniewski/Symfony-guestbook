@@ -19,10 +19,7 @@ final class ConferenceController extends AbstractController
     #[Route('/', name: 'homepage')]
     public function index(ConferenceRepository $conferenceRepository): Response
     {
-        return $this->render('conference/index.html.twig', [
-            'conferences' => $conferenceRepository->findAll(),
-            'popular_conferences' => $conferenceRepository->findWithMostComments(5),
-        ]);
+        return $this->render('conference/index.html.twig');
     }
 
     #[Route('/conference/{id}', name: 'conference')]
@@ -31,7 +28,7 @@ final class ConferenceController extends AbstractController
         Conference $conference,
         CommentRepository $commentRepository,
         EntityManagerInterface $entityManager,
-        PhotoUploader $photoUploader // <-- Nowy argument
+        PhotoUploader $photoUploader
     ): Response {
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment);
@@ -61,7 +58,7 @@ final class ConferenceController extends AbstractController
             'comments' => $paginator,
             'previous' => $offset - CommentRepository::PAGINATOR_PER_PAGE,
             'next' => min(count($paginator), $offset + CommentRepository::PAGINATOR_PER_PAGE),
-            'comment_form' => $form, // Przekazujemy formularz do widoku
+            'comment_form' => $form,
         ]);
     }
 }
