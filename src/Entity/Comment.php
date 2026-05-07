@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\CommentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 class Comment
@@ -15,11 +16,21 @@ class Comment
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Imię jest wymagane')]
+    #[Assert\Regex(
+        pattern: '/(admin|root)/i',
+        match: false,
+        message: 'Imię nie może zawierać słów "admin" ani "root".'
+    )]
     private ?string $author = null;
 
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 10, minMessage: 'Komentarz musi mieć co najmniej 10 znaków')]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $text = null;
 
+    #[Assert\NotBlank]
+    #[Assert\Email(message: 'Podany adres nie jest prawidłowy')]
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
@@ -29,6 +40,10 @@ class Comment
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Conference $conference = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Url(message: 'To nie jest poprawny adres URL')]
+    private ?string $website = null;
 
     public function getId(): ?int
     {
@@ -91,6 +106,18 @@ class Comment
     public function setConference(?Conference $conference): static
     {
         $this->conference = $conference;
+
+        return $this;
+    }
+
+    public function getWebsite(): ?string
+    {
+        return $this->website;
+    }
+
+    public function setWebsite(?string $website): static
+    {
+        $this->website = $website;
 
         return $this;
     }

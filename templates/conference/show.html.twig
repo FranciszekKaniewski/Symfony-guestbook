@@ -16,6 +16,16 @@
             <div class="comment-card">
                 <div class="comment-meta">
                     <strong>{{ comment.author }}</strong> • {{ comment.createdAt|date('d.m.Y H:i') }}
+                    <br>
+                    {# DODANE POLE WEBSITE #}
+                    <small>
+                        Strona: 
+                        {% if comment.website %}
+                            <a href="{{ comment.website }}" target="_blank" rel="nofollow">{{ comment.website }}</a>
+                        {% else %}
+                            <span style="color: #ccc;">brak</span>
+                        {% endif %}
+                    </small>
                 </div>
                 <div class="comment-text">
                     {{ comment.text|nl2br }}
@@ -25,6 +35,31 @@
             <p>Brak komentarzy dla tej konferencji.</p>
         {% endfor %}
     </div>
+
+    <hr>
+        <h3>Dodaj swój komentarz</h3>
+
+        <div class="comment-form-container" style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            {{ form_start(comment_form) }}
+                <div style="margin-bottom: 10px;">
+                    {{ form_row(comment_form.author, {'label': 'Twoje imię'}) }}
+                </div>
+                <div style="margin-bottom: 10px;">
+                    {{ form_row(comment_form.email, {'label': 'E-mail'}) }}
+                </div>
+                <div style="margin-bottom: 10px;">
+                    {{ form_row(comment_form.website, {'label': 'Strona www (opcjonalnie)'}) }}
+                </div>
+                <div style="margin-bottom: 10px;">
+                    {{ form_row(comment_form.text, {'label': 'Treść komentarza'}) }}
+                </div>
+                
+                <button type="submit" class="nav-link" style="border: none; cursor: pointer;">
+                    Wyślij komentarz
+                </button>
+            {{ form_end(comment_form) }}
+        </div>
+        <hr>
 
     <div class="navigation" style="margin-top: 2rem;">
         {% if previous >= 0 %}
