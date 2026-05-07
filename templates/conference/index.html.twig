@@ -6,6 +6,7 @@
 <style>
     :root {
         --primary: #2563eb;
+        --primary-dark: #1d4ed8;
         --text-main: #1e293b;
         --text-muted: #64748b;
         --border: #e2e8f0;
@@ -17,6 +18,10 @@
     .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
     
     .page-title { font-size: 2rem; font-weight: 800; margin-bottom: 40px; border-bottom: 3px solid var(--primary); display: inline-block; padding-bottom: 8px; }
+
+    /* Styl dla linków w nagłówkach */
+    .conference-link { text-decoration: none; color: inherit; transition: color 0.2s; }
+    .conference-link:hover { color: var(--primary); }
 
     .conference-list { list-style: none; padding: 0; margin: 0; }
 
@@ -33,7 +38,7 @@
     .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     
     .title-area { display: flex; align-items: center; gap: 15px; }
-    .city-year { font-size: 1.4rem; font-weight: 700; color: var(--text-main); margin: 0; }
+    .city-year { font-size: 1.4rem; font-weight: 700; margin: 0; }
 
     .badge { 
         font-size: 0.7rem; 
@@ -71,6 +76,13 @@
     .stat { display: flex; align-items: center; gap: 6px; }
     .stat strong { color: var(--text-main); }
 
+    /* Styl dla sekcji popularnych */
+    .popular-section { background: #f1f5f9; padding: 20px; border-radius: 12px; margin-bottom: 40px; }
+    .popular-section h2 { font-size: 1.2rem; margin-top: 0; }
+    .popular-list { padding-left: 20px; }
+    .popular-list a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .popular-list a:hover { text-decoration: underline; }
+
     @media (max-width: 600px) {
         .item-header { flex-direction: column; align-items: flex-start; gap: 10px; }
     }
@@ -78,6 +90,23 @@
 
 <div class="container">
     <h1 class="page-title">Harmonogram konferencji</h1>
+
+    <section class="popular-section">
+        <h2>🔥 Najpopularniejsze konferencje</h2>
+        <ul class="popular-list">
+            {% for conf in popular_conferences %}
+                <li>
+                    {# LINK W SEKCJI POPULARNYCH #}
+                    <a href="{{ path('conference', { id: conf.id }) }}">
+                        {{ conf.city }} {{ conf.year }}
+                    </a> 
+                    <span style="color: var(--text-muted); font-size: 0.85rem;">
+                        ({{ conf.comments|length }} komentarzy)
+                    </span>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
 
     {% if conferences is empty %}
         <p>Brak zaplanowanych wydarzeń.</p>
@@ -87,7 +116,12 @@
                 <li class="conference-item">
                     <div class="item-header">
                         <div class="title-area">
-                            <h2 class="city-year">{{ conference.city|upper }} {{ conference.year }}</h2>
+                            <h2 class="city-year">
+                                {# LINK W TYTULE KONFERENCJI #}
+                                <a href="{{ path('conference', { id: conference.id }) }}" class="conference-link">
+                                    {{ conference.city|upper }} {{ conference.year }}
+                                </a>
+                            </h2>
                             {% if conference.isInternational %}
                                 <span class="badge">International</span>
                             {% endif %}
@@ -117,6 +151,11 @@
                         </div>
                         <div class="stat">
                             <span>👥</span> Limit: <strong>{{ conference.maxAttendees ?? 'bez limitu' }}</strong>
+                        </div>
+                        <div class="stat" style="margin-left: auto;">
+                             <a href="{{ path('conference', { id: conference.id }) }}" style="color: var(--primary); text-decoration: none; font-weight: bold;">
+                                Szczegóły →
+                             </a>
                         </div>
                     </div>
                 </li>

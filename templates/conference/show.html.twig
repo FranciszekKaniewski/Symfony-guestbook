@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <style>
+        .comment-card { border: 1px solid #eee; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; background: #f9f9f9; }
+        .comment-meta { font-size: 0.85rem; color: #666; margin-bottom: 0.5rem; }
+        .nav-link { display: inline-block; padding: 8px 16px; background: #007bff; color: white; border-radius: 4px; text-decoration: none; }
+        .nav-link:hover { background: #0056b3; }
+    </style>
+
+    <h2>{{ conference.city }} {{ conference.year }}</h2>
+    <p><strong>Liczba komentarzy:</strong> {{ comments.count }}</p>
+
+    <div class="comments-list">
+        {% for comment in comments %}
+            <div class="comment-card">
+                <div class="comment-meta">
+                    <strong>{{ comment.author }}</strong> • {{ comment.createdAt|date('d.m.Y H:i') }}
+                </div>
+                <div class="comment-text">
+                    {{ comment.text|nl2br }}
+                </div>
+            </div>
+        {% else %}
+            <p>Brak komentarzy dla tej konferencji.</p>
+        {% endfor %}
+    </div>
+
+    <div class="navigation" style="margin-top: 2rem;">
+        {% if previous >= 0 %}
+            <a href="{{ path('conference', { id: conference.id, offset: previous }) }}" class="nav-link">← Poprzednie</a>
+        {% endif %}
+
+        {% if next < comments.count %}
+            <a href="{{ path('conference', { id: conference.id, offset: next }) }}" class="nav-link">Następne →</a>
+        {% endif %}
+    </div>
+{% endblock %}

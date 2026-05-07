@@ -11,6 +11,6 @@ final class AboutController extends AbstractController
     #[Route('/o-nas', name: 'about')]
     public function index(): Response
     {
-        return new Response('<h1>O naszych konferencjach</h1>');
+        return $this->render('about/index.html.twig');
     }
 }
