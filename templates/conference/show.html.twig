@@ -15,6 +15,15 @@
         {% for comment in comments %}
             <div class="comment-card">
                 <div class="comment-meta">
+
+                    {% if comment.photoFilename %}
+                        <div class="comment-photo" style="margin: 10px 0;">
+                            <img src="{{ asset('uploads/photos/' ~ comment.photoFilename) }}" 
+                                alt="Photo by {{ comment.author }}" 
+                                style="max-width: 200px; border-radius: 4px; display: block;">
+                        </div>
+                    {% endif %}
+                    
                     <strong>{{ comment.author }}</strong> • {{ comment.createdAt|date('d.m.Y H:i') }}
                     <br>
                     {# DODANE POLE WEBSITE #}

@@ -45,6 +45,9 @@ class Comment
     #[Assert\Url(message: 'To nie jest poprawny adres URL')]
     private ?string $website = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $photoFilename = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -118,6 +121,18 @@ class Comment
     public function setWebsite(?string $website): static
     {
         $this->website = $website;
+
+        return $this;
+    }
+
+    public function getPhotoFilename(): ?string
+    {
+        return $this->photoFilename;
+    }
+
+    public function setPhotoFilename(?string $photoFilename): static
+    {
+        $this->photoFilename = $photoFilename;
 
         return $this;
     }

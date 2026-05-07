@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Comment;
 use App\Form\CommentType;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\PhotoUploader;
 
 final class ConferenceController extends AbstractController
 {
@@ -29,21 +30,25 @@ final class ConferenceController extends AbstractController
         Request $request,
         Conference $conference,
         CommentRepository $commentRepository,
-        EntityManagerInterface $entityManager // Dodajemy to
+        EntityManagerInterface $entityManager,
+        PhotoUploader $photoUploader // <-- Nowy argument
     ): Response {
-        // 1. Obsługa formularza
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $photo = $form->get('photo')->getData();
+            if ($photo) {
+                $filename = $photoUploader->upload($photo);
+                $comment->setPhotoFilename($filename);
+            }
+
             $comment->setConference($conference);
             $comment->setCreatedAt(new \DateTimeImmutable());
-
             $entityManager->persist($comment);
             $entityManager->flush();
 
-            // Wzorzec Post-Redirect-Get
             return $this->redirectToRoute('conference', ['id' => $conference->getId()]);
         }
 
