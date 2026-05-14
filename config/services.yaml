@@ -25,3 +25,7 @@ services:
     App\Service\PhotoUploader:
         arguments:
             $targetDirectory: '%photos_directory%'
+
+    App\EventListener\CommentNotificationListener:
+        arguments:
+            $adminEmail: '%env(ADMIN_EMAIL)%'     
