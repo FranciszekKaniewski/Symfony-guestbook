@@ -11,8 +11,10 @@ use App\Entity\Conference;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Comment;
 use App\Form\CommentType;
+use App\Form\ConferenceType; // DODANE: import formularza konferencji
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\PhotoUploader;
+use Symfony\Component\String\Slugger\SluggerInterface; // DODANE: import sluggera z pracy domowej
 
 final class ConferenceController extends AbstractController
 {
@@ -22,13 +24,40 @@ final class ConferenceController extends AbstractController
         return $this->render('conference/index.html.twig');
     }
 
-    #[Route('/conference/{id}', name: 'conference')]
+    // DODANE: Nowa metoda do tworzenia konferencji. 
+    // Musi być PRZED metodą show, aby uniknąć konfliktu z {slug}
+    #[Route('/conference/new', name: 'conference_new')]
+    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    {
+        $conference = new Conference();
+        $form = $this->createForm(ConferenceType::class, $conference);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Kod z pracy domowej: generujemy slug!
+            $sourceString = $conference->getCity() . '-' . $conference->getYear();
+            $slug = $slugger->slug($sourceString)->lower();
+            $conference->setSlug((string) $slug);
+
+            $entityManager->persist($conference);
+            $entityManager->flush();
+
+            // Po dodaniu przekierowujemy na stronę główną (lub stronę tej konkretnej konferencji)
+            return $this->redirectToRoute('homepage');
+        }
+
+        return $this->render('conference/new.html.twig', [
+            'conference_form' => $form,
+        ]);
+    }
+
+    #[Route('/conference/{slug}', name: 'conference')]
     public function show(
         Request $request,
         Conference $conference,
         CommentRepository $commentRepository,
         EntityManagerInterface $entityManager,
-        PhotoUploader $photoUploader
+        PhotoUploader $photoUploader,
     ): Response {
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment);
@@ -46,10 +75,9 @@ final class ConferenceController extends AbstractController
             $entityManager->persist($comment);
             $entityManager->flush();
 
-            return $this->redirectToRoute('conference', ['id' => $conference->getId()]);
+            return $this->redirectToRoute('conference', ['slug' => $conference->getSlug()]);
         }
 
-        // 2. Paginacja (kod z poprzedniej lekcji)
         $offset = max(0, $request->query->getInt('offset', 0));
         $paginator = $commentRepository->getCommentPaginator($conference, $offset);
 

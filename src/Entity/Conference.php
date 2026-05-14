@@ -43,6 +43,9 @@ class Conference
     #[ORM\ManyToMany(targetEntity: Speaker::class, inversedBy: 'conferences')]
     private Collection $speakers;
 
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $slug = null;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -164,6 +167,18 @@ class Conference
     public function removeSpeaker(Speaker $speaker): static
     {
         $this->speakers->removeElement($speaker);
+
+        return $this;
+    }
+    
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+    
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }

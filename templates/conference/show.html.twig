@@ -70,13 +70,13 @@
         </div>
         <hr>
 
-    <div class="navigation" style="margin-top: 2rem;">
-        {% if previous >= 0 %}
-            <a href="{{ path('conference', { id: conference.id, offset: previous }) }}" class="nav-link">← Poprzednie</a>
-        {% endif %}
+        <div class="navigation" style="margin-top: 2rem;">
+            {% if previous >= 0 %}
+                <a href="{{ path('conference', { slug: conference.slug, offset: previous }) }}" class="nav-link">← Poprzednie</a>
+            {% endif %}
 
-        {% if next < comments.count %}
-            <a href="{{ path('conference', { id: conference.id, offset: next }) }}" class="nav-link">Następne →</a>
-        {% endif %}
-    </div>
+            {% if next < comments.count %}
+                <a href="{{ path('conference', { slug: conference.slug, offset: next }) }}" class="nav-link">Następne →</a>
+            {% endif %}
+        </div>
 {% endblock %}

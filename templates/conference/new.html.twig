@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dodaj nową konferencję{% endblock %}
+
+{% block body %}
+<div class="container" style="max-width: 600px; margin: 40px auto; padding: 0 20px;">
+    <h2>Dodaj nową konferencję</h2>
+
+    <div style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 20px;">
+        {{ form_start(conference_form) }}
+            {{ form_widget(conference_form) }}
+            
+            <button type="submit" style="display: inline-block; padding: 10px 20px; background: #2563eb; color: white; border-radius: 4px; border: none; cursor: pointer; margin-top: 15px;">
+                Zapisz konferencję
+            </button>
+        {{ form_end(conference_form) }}
+    </div>
+    
+    <a href="{{ path('homepage') }}" style="display: block; margin-top: 20px; color: #64748b; text-decoration: none;">← Wróć do listy</a>
+</div>
+{% endblock %}
