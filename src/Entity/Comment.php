@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Comment
 {
     #[ORM\Id]
@@ -35,7 +36,11 @@ class Comment
     private ?string $email = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    private ?\DateTimeImmutable $createdAt = null; 
+
+    // DODANE: Właściwość updatedAt
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
@@ -101,6 +106,20 @@ class Comment
         return $this;
     }
 
+    // DODANE: Getter dla updatedAt
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    // DODANE: Setter dla updatedAt
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
     public function getConference(): ?Conference
     {
         return $this->conference;
@@ -136,4 +155,20 @@ class Comment
 
         return $this;
     }
+
+    #[ORM\PrePersist]
+    public function setCreatedAtValue(): void
+    {
+        // Ustawia datę tylko jeśli jej jeszcze nie ma
+        if ($this->createdAt === null) {
+            $this->createdAt = new \DateTimeImmutable();
+        }
+    } 
+
+    // POPRAWIONE: Zmiana nazwy metody, by nie konfliktowała z setterem
+    #[ORM\PreUpdate]
+    public function setUpdatedAtValue(): void 
+    {
+        $this->updatedAt = new \DateTimeImmutable();
+    } 
 }
