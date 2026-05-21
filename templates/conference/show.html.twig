@@ -18,7 +18,7 @@
 
                     {% if comment.photoFilename %}
                         <div class="comment-photo" style="margin: 10px 0;">
-                            <img src="{{ asset('uploads/photos/' ~ comment.photoFilename) }}" 
+                            <img src="{{ asset('uploads/photos/' ~ comment.photoFilename) | imagine_filter('squared_thumbnail') }}" 
                                 alt="Photo by {{ comment.author }}" 
                                 style="max-width: 200px; border-radius: 4px; display: block;">
                         </div>

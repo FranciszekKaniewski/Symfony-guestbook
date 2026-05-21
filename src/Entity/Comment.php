@@ -47,7 +47,7 @@ class Comment
     private ?Conference $conference = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\Url(message: 'To nie jest poprawny adres URL')]
+    #[Assert\Url(message: 'To nie jest poprawny adres URL', requireTld: true)]
     private ?string $website = null;
 
     #[ORM\Column(length: 255, nullable: true)]

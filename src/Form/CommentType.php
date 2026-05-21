@@ -27,11 +27,11 @@ class CommentType extends AbstractType
             'mapped' => false,
             'required' => false,
             'constraints' => [
-                new File([
-                    'maxSize' => '2M',
-                    'mimeTypes' => ['image/jpeg', 'image/png', 'image/webp'],
-                    'mimeTypesMessage' => 'Dozwolone formaty: JPG, PNG, WEBP',
-                ])
+                new File(
+                    maxSize: '2M',
+                    mimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+                    mimeTypesMessage: 'Dozwolone formaty: JPG, PNG, WEBP'
+                )
             ],
         ]);
     }
